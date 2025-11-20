@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Pengaduan</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+  <style>
+    body {
+      background: #e0f2f1; /* soft teal */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Card Login */
+    .card {
+      position: relative;
+      flex: 0 0 auto;
+      border-radius: 18px;
+      padding: 30px 25px;
+      background: #ffffff;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+      max-width: 380px;
+      width: 100%;
+      max-height: 480px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInCard 0.8s forwards;
+    }
+
+    @keyframes fadeInCard {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h3 {
+      color: #004d40; /* deep teal */
+      font-weight: 600;
+      transition: transform 0.3s;
+    }
+
+    h3:hover {
+      transform: scale(1.02);
+    }
+
+    .form-floating {
+      margin-bottom: 1rem;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 1rem 0.75rem 0.25rem 0.75rem;
+      transition: 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: #004d40;
+      box-shadow: 0 0 6px rgba(0,77,64,0.25);
+    }
+
+    .form-floating > label {
+      color: #777;
+      pointer-events: none;
+      transition: all 0.2s ease-out;
+      transform-origin: left top;
+    }
+
+    .form-control:focus ~ label,
+    .form-control:not(:placeholder-shown) ~ label {
+      font-size: 0.8rem;
+      transform: translateY(-1.5rem) scale(1);
+      color: #004d40;
+    }
+
+    .btn-login {
+      background: #004d40; /* deep teal */
+      color: #d4af37; /* soft gold */
+      font-weight: 600;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .btn-login:hover {
+      background: #00332a;
+      color: #fff;
+      transform: scale(1.02);
+    }
+
+    a {
+      color: #004d40;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 400px) {
+      .card {
+        padding: 25px 20px;
+        max-height: 460px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card shadow">
+      <h3 class="text-center mb-3">Login</h3>
+      <p class="text-center text-muted mb-4">Masuk ke Sistem Pengaduan</p>
+
+      <form id="loginForm">
+        <div class="form-floating">
+          <input type="email" id="email" class="form-control" placeholder="Email" required>
+          <label for="email">Email</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="password" id="password" class="form-control" placeholder="Password" required>
+          <label for="password">Password</label>
+        </div>
+
+        <button type="submit" class="btn btn-login w-100 mt-3">Login</button>
+
+        <p class="text-center mt-3">
+          Belum punya akun? <a href="register.html">Daftar di sini</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+<script>
+  const loginForm = document.getElementById("loginForm");
+
+  loginForm.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    const accounts = JSON.parse(localStorage.getItem("accounts")) || [];
+    const account = accounts.find(acc => acc.email === email && acc.password === password);
+
+    if(!account){
+      alert("Login gagal! Email atau password salah.");
+      return;
+    }
+
+    // Simpan session umum
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("loggedRole", account.role);
+    localStorage.setItem("loggedName", account.name);
+    localStorage.setItem("loggedEmail", account.email);
+
+    // Role spesifik untuk admin
+    if(account.role === "admin"){
+      localStorage.setItem("isAdmin", "true");
+      localStorage.setItem("adminEmail", account.email);
+      window.location.href = "admin.html";
+    } else {
+      // Role user
+      localStorage.setItem("isUser", "true");
+      localStorage.setItem("userName", account.name);
+      window.location.href = "user.html";
+    }
+  });
+</script>
+
+</body>
+</html>
